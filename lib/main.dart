@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'home.dart';
+import 'package:soru_takip/taha.dart';
+import 'package:soru_takip/widgets.dart';
+import 'package:soru_takip/yavuz.dart';
 
 void main() => runApp(SoruTakip());
 
@@ -9,12 +12,17 @@ class SoruTakip extends StatelessWidget {
     return MaterialApp(
       title: 'Soru Takip',
       debugShowCheckedModeBanner: false,
-      home: Home(),
+      routes: {
+        '/': (BuildContext context) => Authentication(),
+        '/yavuz': (BuildContext context) => Yavuz(),
+        '/taha': (BuildContext context) => Taha(),
+      },
+      initialRoute: '/',
     );
   }
 }
 
-/* class Authentication extends StatefulWidget {
+class Authentication extends StatefulWidget {
   @override
   _AuthenticationState createState() => _AuthenticationState();
 }
@@ -52,10 +60,12 @@ class _AuthenticationState extends State<Authentication> {
       FirebaseUser user = (await FirebaseAuth.instance
               .signInWithEmailAndPassword(email: _email, password: _password))
           .user;
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (BuildContext context) => Home(user: user)));
+      user.email == "tahanuman04@gmail.com"
+          ? Navigator.pushNamedAndRemoveUntil(
+              context, '/taha', (route) => false, arguments: {'user': user})
+          : Navigator.pushNamedAndRemoveUntil(
+              context, '/yavuz', (route) => false,
+              arguments: {'user': user});
     } catch (e) {
       switch (e.code) {
         case "ERROR_USER_NOT_FOUND":
@@ -65,10 +75,13 @@ class _AuthenticationState extends State<Authentication> {
                       .createUserWithEmailAndPassword(
                           email: _email, password: _password))
                   .user;
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) => Home(user: user)));
+              user.email == "tahanuman04@gmail.com"
+                  ? Navigator.pushNamedAndRemoveUntil(
+                      context, '/taha', (route) => false,
+                      arguments: {'user': user})
+                  : Navigator.pushNamedAndRemoveUntil(
+                      context, '/yavuz', (route) => false,
+                      arguments: {'user': user});
             } catch (e) {
               Scaffold.of(context).showSnackBar(snackbar(e.message));
             }
@@ -119,4 +132,3 @@ class _AuthenticationState extends State<Authentication> {
     );
   }
 }
- */

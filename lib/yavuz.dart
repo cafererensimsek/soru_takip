@@ -1,16 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:soru_takip/soru.dart';
+import 'package:soru_takip/taha.dart';
 import 'package:soru_takip/widgets.dart';
 import 'package:intl/intl.dart';
 
-class Home extends StatefulWidget {
+class Yavuz extends StatefulWidget {
   @override
-  _HomeState createState() => _HomeState();
+  _YavuzState createState() => _YavuzState();
 }
 
-class _HomeState extends State<Home> {
+class _YavuzState extends State<Yavuz> {
   final soruSayisiController = TextEditingController();
   final yanlisSayisiController = TextEditingController();
   final dersAdiController = TextEditingController();
@@ -18,6 +20,7 @@ class _HomeState extends State<Home> {
   String _yanlisSayisi;
   String _dersAdi;
   String _tarih;
+  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -52,7 +55,6 @@ class _HomeState extends State<Home> {
         yanlisSayisi == null ||
         dersAdi == null ||
         tarih == null) {
-      Scaffold.of(ctx).showSnackBar(snackbar('Bütün alanları doldurun!'));
       return;
     }
 
@@ -67,22 +69,6 @@ class _HomeState extends State<Home> {
       'tarih': tarih,
     }, merge: true);
     Navigator.pop(ctx);
-  }
-
-  void _showDatePicker() {
-    showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now(),
-    ).then((pickedDate) {
-      if (pickedDate == null) {
-        return;
-      }
-      setState(() {
-        _tarih = DateFormat('dd MMM yyyy').format(pickedDate);
-      });
-    });
   }
 
   Widget dropdownMenu() {
@@ -129,10 +115,35 @@ class _HomeState extends State<Home> {
         return Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            FlatButton(
-                color: Colors.white,
-                onPressed: _showDatePicker,
-                child: Text('Tarih Seç', style: TextStyle(fontSize: 25))),
+            Padding(
+              padding: const EdgeInsets.only(top: 25),
+              child: StatefulBuilder(
+                builder: (BuildContext context, setState) {
+                  return FlatButton(
+                      color: Colors.white,
+                      onPressed: () => showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2020),
+                            lastDate: DateTime.now(),
+                          ).then((pickedDate) {
+                            if (pickedDate == null) {
+                              return;
+                            }
+                            setState(() {
+                              _tarih =
+                                  DateFormat('dd MMM yyyy').format(pickedDate);
+                            });
+                          }),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: _tarih == null
+                            ? Text('Tarih Seç', style: TextStyle(fontSize: 20))
+                            : Text(_tarih),
+                      ));
+                },
+              ),
+            ),
             textInput(
                 controller: soruSayisiController,
                 hintText: 'Soru Sayısı',
@@ -228,7 +239,21 @@ class _HomeState extends State<Home> {
     ]);
   }
 
-  Widget soruListDisplay(BuildContext context, CollectionReference database) {
+  void delete(Soru soru) {
+    Firestore.instance
+        .collection('yavuz')
+        .document(soru.tarih + " " + soru.dersAdi)
+        .delete();
+  }
+
+  void _navigate(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  Widget soruListDisplay(
+      BuildContext context, CollectionReference database, bool isAdmin) {
     final currentData = Provider.of<QuerySnapshot>(context);
 
     List<Soru> currentList = [];
@@ -239,35 +264,48 @@ class _HomeState extends State<Home> {
     });
 
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Builder(
         builder: (BuildContext context) {
-          return FloatingActionButton.extended(
+          return FloatingActionButton(
             onPressed: () => addSoru(context),
-            label: Text('Veri Ekle'),
-            elevation: 5,
-            icon: Icon(Icons.add),
+            child: Icon(Icons.add),
           );
         },
       ),
-      body: Column(children: [
-        SizedBox(height: 25),
-        collectiveData(currentData),
-        Expanded(
-          child: ListView(
-            children: [
-              for (Soru soru in currentList.reversed)
-                Card(
-                  child: ListTile(
-                    title: Text(
-                        'Soru Sayısı: ${soru.soruSayisi}, Yanlış Sayısı: ${soru.yanlisSayisi}'),
-                    subtitle: Text('${soru.dersAdi} \n${soru.tarih}'),
-                    isThreeLine: true,
-                  ),
+      body: _selectedIndex == 0
+          ? Column(children: [
+              SizedBox(height: 25),
+              collectiveData(currentData),
+              Expanded(
+                child: ListView(
+                  children: [
+                    for (Soru soru in currentList.reversed)
+                      Card(
+                        child: ListTile(
+                          onLongPress: isAdmin ? () => delete(soru) : null,
+                          title: Text(
+                              'Soru Sayısı: ${soru.soruSayisi}, Yanlış Sayısı: ${soru.yanlisSayisi}'),
+                          subtitle: Text('${soru.dersAdi} \n${soru.tarih}'),
+                          isThreeLine: true,
+                        ),
+                      ),
+                  ],
                 ),
-            ],
-          ),
-        ),
-      ]),
+              ),
+            ])
+          : Taha(),
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.school), label: 'Yavuz'),
+          BottomNavigationBarItem(icon: Icon(Icons.school), label: 'Taha'),
+        ],
+        backgroundColor: Colors.black,
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.white,
+        currentIndex: _selectedIndex,
+        onTap: _navigate,
+      ),
     );
   }
 
@@ -278,13 +316,17 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     CollectionReference database = Firestore.instance.collection('yavuz');
+    final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+    // ignore: unused_local_variable
+    FirebaseUser user = arguments['user'];
+    bool isAdmin = true; /* user.email == 'yavuzselimsimsek07@gmail.com'; */
     return StreamProvider<QuerySnapshot>.value(
       value: currentData,
       child: StreamBuilder(
         stream: currentData,
         builder: (context, snapshot) {
           return snapshot.hasData
-              ? soruListDisplay(context, database)
+              ? soruListDisplay(context, database, isAdmin)
               : loading(context);
         },
       ),
