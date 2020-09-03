@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "875373438775",
+    "firebase_url": "https://soru-takip-2279e.firebaseio.com",
+    "project_id": "soru-takip-2279e",
+    "storage_bucket": "soru-takip-2279e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:875373438775:android:0a2302acc2e1595c33dcb2",
+        "android_client_info": {
+          "package_name": "com.example.soru_takip"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "875373438775-gs1vnpkdml5fpfen18hvvjuj6okg96sm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHR3rB-x3z0JFSew5nU1TATo2YIXusr0I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "875373438775-gs1vnpkdml5fpfen18hvvjuj6okg96sm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
