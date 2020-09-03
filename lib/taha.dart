@@ -84,11 +84,34 @@ class _TahaState extends State<Taha> {
     ]);
   }
 
-  void delete(Soru soru) {
-    Firestore.instance
-        .collection('taha')
-        .document(soru.tarih + " " + soru.dersAdi)
-        .delete();
+  void delete(Soru soru, BuildContext ctx) {
+    bool kabul = false;
+    AlertDialog(
+      elevation: 24,
+      title: Text('Silinecek!'),
+      content: Text('Silmek istediğinize emin misiniz?'),
+      actions: [
+        SimpleDialogOption(
+          child: Text('Hayır'),
+          onPressed: () => kabul = false,
+        ),
+        SimpleDialogOption(
+          child: Text('Evet'),
+          onPressed: () => kabul = true,
+        ),
+      ],
+    );
+    showDialog(
+      context: ctx,
+      builder: (_) => AlertDialog(),
+      barrierDismissible: true,
+    );
+    if (kabul) {
+      Firestore.instance
+          .collection('taha')
+          .document(soru.tarih + " " + soru.dersAdi)
+          .delete();
+    }
   }
 
   Widget soruListDisplay(
@@ -105,22 +128,24 @@ class _TahaState extends State<Taha> {
     return Scaffold(
       body: Column(children: [
         SizedBox(height: 25),
-        collectiveDataTaha(currentData),
-        Expanded(
-          child: ListView(
-            children: [
-              for (Soru soru in currentList.reversed)
-                Card(
-                  child: ListTile(
-                    onLongPress: isAdmin ? () => delete(soru) : null,
-                    title: Text(
-                        'Soru Sayısı: ${soru.soruSayisi}, Yanlış Sayısı: ${soru.yanlisSayisi}'),
-                    subtitle: Text('${soru.dersAdi} \n${soru.tarih}'),
-                    isThreeLine: true,
-                  ),
+        SingleChildScrollView(
+          child: collectiveDataTaha(currentData),
+          scrollDirection: Axis.horizontal,
+        ),
+        ListView(
+          shrinkWrap: true,
+          children: [
+            for (Soru soru in currentList.reversed)
+              Card(
+                child: ListTile(
+                  onLongPress: isAdmin ? () => delete(soru, context) : null,
+                  title: Text(
+                      'Soru Sayısı: ${soru.soruSayisi}, Yanlış Sayısı: ${soru.yanlisSayisi}'),
+                  subtitle: Text('${soru.dersAdi} \n${soru.tarih}'),
+                  isThreeLine: true,
                 ),
-            ],
-          ),
+              ),
+          ],
         ),
       ]),
     );

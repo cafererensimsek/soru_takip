@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:soru_takip/soru.dart';
 import 'package:soru_takip/taha.dart';
@@ -245,11 +246,34 @@ class _YavuzState extends State<Yavuz> {
     ]);
   }
 
-  void delete(Soru soru) {
-    Firestore.instance
-        .collection(isim)
-        .document(soru.tarih + " " + soru.dersAdi)
-        .delete();
+  void delete(Soru soru, BuildContext ctx) {
+    bool kabul = false;
+    AlertDialog(
+      elevation: 24,
+      title: Text('Silinecek!'),
+      content: Text('Silmek istediğinize emin misiniz?'),
+      actions: [
+        SimpleDialogOption(
+          child: Text('Hayır'),
+          onPressed: () => kabul = false,
+        ),
+        SimpleDialogOption(
+          child: Text('Evet'),
+          onPressed: () => kabul = true,
+        ),
+      ],
+    );
+    showDialog(
+      context: ctx,
+      builder: (_) => AlertDialog(),
+      barrierDismissible: true,
+    );
+    if (kabul) {
+      Firestore.instance
+          .collection('taha')
+          .document(soru.tarih + " " + soru.dersAdi)
+          .delete();
+    }
   }
 
   void _navigate(int index) {
@@ -289,22 +313,25 @@ class _YavuzState extends State<Yavuz> {
       body: _selectedIndex == 0
           ? Column(children: [
               SizedBox(height: 25),
-              collectiveData(currentData),
-              Expanded(
-                child: ListView(
-                  children: [
-                    for (Soru soru in currentList.reversed)
-                      Card(
-                        child: ListTile(
-                          onLongPress: isAdmin ? () => delete(soru) : null,
-                          title: Text(
-                              'Soru Sayısı: ${soru.soruSayisi}, Yanlış Sayısı: ${soru.yanlisSayisi}'),
-                          subtitle: Text('${soru.dersAdi} \n${soru.tarih}'),
-                          isThreeLine: true,
-                        ),
+              SingleChildScrollView(
+                child: collectiveData(currentData),
+                scrollDirection: Axis.horizontal,
+              ),
+              ListView(
+                shrinkWrap: true,
+                children: [
+                  for (Soru soru in currentList.reversed)
+                    Card(
+                      child: ListTile(
+                        onLongPress:
+                            isAdmin ? () => delete(soru, context) : null,
+                        title: Text(
+                            'Soru Sayısı: ${soru.soruSayisi}, Yanlış Sayısı: ${soru.yanlisSayisi}'),
+                        subtitle: Text('${soru.dersAdi} \n${soru.tarih}'),
+                        isThreeLine: true,
                       ),
-                  ],
-                ),
+                    ),
+                ],
               ),
             ])
           : Taha(),
