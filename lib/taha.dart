@@ -85,33 +85,33 @@ class _TahaState extends State<Taha> {
   }
 
   void delete(Soru soru, BuildContext ctx) {
-    bool kabul = false;
-    AlertDialog(
-      elevation: 24,
-      title: Text('Silinecek!'),
-      content: Text('Silmek istediğinize emin misiniz?'),
-      actions: [
-        SimpleDialogOption(
-          child: Text('Hayır'),
-          onPressed: () => kabul = false,
-        ),
-        SimpleDialogOption(
-          child: Text('Evet'),
-          onPressed: () => kabul = true,
-        ),
-      ],
-    );
     showDialog(
       context: ctx,
-      builder: (_) => AlertDialog(),
+      builder: (BuildContext context) => AlertDialog(
+        elevation: 24,
+        title: Text('Silinecek!'),
+        content: Text('Silmek istediğinize emin misiniz?'),
+        actions: [
+          SimpleDialogOption(
+            child: Text('Hayır'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          SimpleDialogOption(
+            child: Text('Evet'),
+            onPressed: () {
+              Firestore.instance
+                  .collection('taha')
+                  .document(soru.tarih + " " + soru.dersAdi)
+                  .delete();
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
       barrierDismissible: true,
     );
-    if (kabul) {
-      Firestore.instance
-          .collection('taha')
-          .document(soru.tarih + " " + soru.dersAdi)
-          .delete();
-    }
   }
 
   Widget soruListDisplay(
