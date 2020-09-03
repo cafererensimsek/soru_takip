@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:soru_takip/soru.dart';
@@ -21,6 +20,14 @@ class _YavuzState extends State<Yavuz> {
   String _dersAdi;
   String _tarih;
   int _selectedIndex = 0;
+  String isim = 'yavuz';
+  List<String> dersListesi = [
+    'Matematik',
+    'Fen',
+    'Türkçe',
+    'Sosyal',
+    'İngilizce'
+  ];
 
   @override
   void initState() {
@@ -59,7 +66,7 @@ class _YavuzState extends State<Yavuz> {
     }
 
     var db =
-        Firestore.instance.collection('yavuz').document(tarih + " " + dersAdi);
+        Firestore.instance.collection(isim).document(tarih + " " + dersAdi);
     int soru = int.parse(soruSayisi);
     int yanlis = int.parse(yanlisSayisi);
     db.setData({
@@ -94,8 +101,7 @@ class _YavuzState extends State<Yavuz> {
                 _dersAdi = newValue;
               });
             },
-            items: <String>['Matematik', 'Fen', 'Türkçe', 'Sosyal', 'İngilizce']
-                .map<DropdownMenuItem<String>>((String value) {
+            items: dersListesi.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(value.toString()),
@@ -241,7 +247,7 @@ class _YavuzState extends State<Yavuz> {
 
   void delete(Soru soru) {
     Firestore.instance
-        .collection('yavuz')
+        .collection(isim)
         .document(soru.tarih + " " + soru.dersAdi)
         .delete();
   }
@@ -249,6 +255,13 @@ class _YavuzState extends State<Yavuz> {
   void _navigate(int index) {
     setState(() {
       _selectedIndex = index;
+      if (_selectedIndex == 0) {
+        isim = 'yavuz';
+        dersListesi = ['Matematik', 'Fen', 'Türkçe', 'Sosyal', 'İngilizce'];
+      } else {
+        isim = 'taha';
+        dersListesi = ['Matematik', 'Geometri', 'Fizik', 'Kimya', 'Biyoloji'];
+      }
     });
   }
 
@@ -316,9 +329,8 @@ class _YavuzState extends State<Yavuz> {
   @override
   Widget build(BuildContext context) {
     CollectionReference database = Firestore.instance.collection('yavuz');
-    final Map arguments = ModalRoute.of(context).settings.arguments as Map;
-    // ignore: unused_local_variable
-    FirebaseUser user = arguments['user'];
+/*     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+    FirebaseUser user = arguments['user']; */
     bool isAdmin = true; /* user.email == 'yavuzselimsimsek07@gmail.com'; */
     return StreamProvider<QuerySnapshot>.value(
       value: currentData,

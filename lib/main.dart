@@ -1,7 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:soru_takip/taha.dart';
-import 'package:soru_takip/widgets.dart';
 import 'package:soru_takip/yavuz.dart';
 
 void main() => runApp(SoruTakip());
@@ -13,8 +11,7 @@ class SoruTakip extends StatelessWidget {
       title: 'Soru Takip',
       debugShowCheckedModeBanner: false,
       routes: {
-        '/': (BuildContext context) => Authentication(),
-        '/yavuz': (BuildContext context) => Yavuz(),
+        '/': (BuildContext context) => Yavuz(),
         '/taha': (BuildContext context) => Taha(),
       },
       initialRoute: '/',
@@ -22,7 +19,7 @@ class SoruTakip extends StatelessWidget {
   }
 }
 
-class Authentication extends StatefulWidget {
+/* class Authentication extends StatefulWidget {
   @override
   _AuthenticationState createState() => _AuthenticationState();
 }
@@ -132,3 +129,4 @@ class _AuthenticationState extends State<Authentication> {
     );
   }
 }
+ */

@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:soru_takip/soru.dart';
@@ -134,9 +133,8 @@ class _TahaState extends State<Taha> {
   @override
   Widget build(BuildContext context) {
     CollectionReference database = Firestore.instance.collection('taha');
-    final Map arguments = ModalRoute.of(context).settings.arguments as Map;
-    // ignore: unused_local_variable
-    FirebaseUser user = arguments['user'];
+/*     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+    FirebaseUser user = arguments['user']; */
     bool isAdmin = true; /* user.email == 'tahanuman04@gmail.com'; */
     return StreamProvider<QuerySnapshot>.value(
       value: currentData,
