@@ -124,7 +124,7 @@ class _TahaState extends State<Taha> {
           element.data['soruSayisi'],
           element.data['dersAdi'],
           element.data['yanlisSayisi'],
-          element.data['tarih'].toDate(),
+          DateTime.parse(element.data['tarih'].toDate().toString()),
           element.data['strTarih']);
       currentList.add(soru);
     });

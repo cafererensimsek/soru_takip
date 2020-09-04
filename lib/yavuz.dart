@@ -176,8 +176,14 @@ class _YavuzState extends State<Yavuz> {
             dropdownMenu(),
             FlatButton(
                 color: Colors.amber,
-                onPressed: () => ekle(context, _soruSayisi, _yanlisSayisi,
-                    _dersAdi, strTarih, _tarih),
+                onPressed: () => ekle(
+                      context,
+                      _soruSayisi,
+                      _yanlisSayisi,
+                      _dersAdi,
+                      strTarih,
+                      _tarih,
+                    ),
                 child: Text('Ekle',
                     style: TextStyle(color: Colors.white, fontSize: 20))),
           ],
