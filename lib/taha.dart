@@ -103,7 +103,7 @@ class _TahaState extends State<Taha> {
             onPressed: () {
               Firestore.instance
                   .collection('taha')
-                  .document(soru.tarih + " " + soru.dersAdi)
+                  .document(soru.strTarih + " " + soru.dersAdi)
                   .delete();
               Navigator.pop(context);
             },
@@ -120,10 +120,17 @@ class _TahaState extends State<Taha> {
 
     List<Soru> currentList = [];
     currentData.documents.forEach((element) {
-      Soru soru = Soru(element.data['soruSayisi'], element.data['dersAdi'],
-          element.data['yanlisSayisi'], element.data['tarih']);
+      Soru soru = Soru(
+          element.data['soruSayisi'],
+          element.data['dersAdi'],
+          element.data['yanlisSayisi'],
+          element.data['tarih'].toDate(),
+          element.data['strTarih']);
       currentList.add(soru);
     });
+
+    currentList.sort((a, b) => a.tarih.compareTo(b.tarih));
+    currentList = currentList.reversed.toList();
 
     return Scaffold(
       body: Column(children: [
@@ -132,20 +139,24 @@ class _TahaState extends State<Taha> {
           child: collectiveDataTaha(currentData),
           scrollDirection: Axis.horizontal,
         ),
-        ListView(
-          shrinkWrap: true,
-          children: [
-            for (Soru soru in currentList.reversed)
-              Card(
+        Expanded(
+          child: ListView.builder(
+            itemCount: currentList.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Card(
                 child: ListTile(
-                  onLongPress: isAdmin ? () => delete(soru, context) : null,
+                  onLongPress: isAdmin
+                      ? () => delete(currentList[index], context)
+                      : null,
                   title: Text(
-                      'Soru Sayısı: ${soru.soruSayisi}, Yanlış Sayısı: ${soru.yanlisSayisi}'),
-                  subtitle: Text('${soru.dersAdi} \n${soru.tarih}'),
+                      'Soru Sayısı: ${currentList[index].soruSayisi}, Yanlış Sayısı: ${currentList[index].yanlisSayisi}'),
+                  subtitle: Text(
+                      '${currentList[index].dersAdi} \n${currentList[index].strTarih}'),
                   isThreeLine: true,
                 ),
-              ),
-          ],
+              );
+            },
+          ),
         ),
       ]),
     );

@@ -19,7 +19,8 @@ class _YavuzState extends State<Yavuz> {
   String _soruSayisi;
   String _yanlisSayisi;
   String _dersAdi;
-  String _tarih;
+  DateTime _tarih;
+  String strTarih;
   int _selectedIndex = 0;
   String isim = 'yavuz';
   List<String> dersListesi = [
@@ -27,7 +28,7 @@ class _YavuzState extends State<Yavuz> {
     'Fen',
     'Türkçe',
     'Sosyal',
-    'İngilizce'
+    'İngilizce',
   ];
 
   @override
@@ -57,25 +58,37 @@ class _YavuzState extends State<Yavuz> {
     String soruSayisi,
     String yanlisSayisi,
     String dersAdi,
-    String tarih,
+    String strTarih,
+    DateTime tarih,
   ) {
     if (soruSayisi == null ||
         yanlisSayisi == null ||
         dersAdi == null ||
-        tarih == null) {
+        strTarih == null) {
+      setState(() {
+        _dersAdi = null;
+        _tarih = null;
+      });
+      Navigator.pop(context);
       return;
     }
 
     var db =
-        Firestore.instance.collection(isim).document(tarih + " " + dersAdi);
+        Firestore.instance.collection(isim).document(strTarih + " " + dersAdi);
     int soru = int.parse(soruSayisi);
     int yanlis = int.parse(yanlisSayisi);
     db.setData({
       'soruSayisi': FieldValue.increment(soru),
       'yanlisSayisi': FieldValue.increment(yanlis),
       'dersAdi': dersAdi,
+      'strTarih': strTarih,
       'tarih': tarih,
     }, merge: true);
+
+    setState(() {
+      _dersAdi = null;
+      _tarih = null;
+    });
     Navigator.pop(ctx);
   }
 
@@ -138,15 +151,16 @@ class _YavuzState extends State<Yavuz> {
                               return;
                             }
                             setState(() {
-                              _tarih =
-                                  DateFormat('dd MMM yyyy').format(pickedDate);
+                              _tarih = pickedDate;
+                              strTarih =
+                                  DateFormat('dd MM yyyy').format(pickedDate);
                             });
                           }),
                       child: Padding(
                         padding: const EdgeInsets.all(10),
                         child: _tarih == null
                             ? Text('Tarih Seç', style: TextStyle(fontSize: 20))
-                            : Text(_tarih),
+                            : Text(strTarih),
                       ));
                 },
               ),
@@ -162,8 +176,8 @@ class _YavuzState extends State<Yavuz> {
             dropdownMenu(),
             FlatButton(
                 color: Colors.amber,
-                onPressed: () =>
-                    ekle(context, _soruSayisi, _yanlisSayisi, _dersAdi, _tarih),
+                onPressed: () => ekle(context, _soruSayisi, _yanlisSayisi,
+                    _dersAdi, strTarih, _tarih),
                 child: Text('Ekle',
                     style: TextStyle(color: Colors.white, fontSize: 20))),
           ],
@@ -265,7 +279,7 @@ class _YavuzState extends State<Yavuz> {
             onPressed: () {
               Firestore.instance
                   .collection('yavuz')
-                  .document(soru.tarih + " " + soru.dersAdi)
+                  .document(soru.strTarih + " " + soru.dersAdi)
                   .delete();
               Navigator.pop(context);
             },
@@ -295,10 +309,17 @@ class _YavuzState extends State<Yavuz> {
 
     List<Soru> currentList = [];
     currentData.documents.forEach((element) {
-      Soru soru = Soru(element.data['soruSayisi'], element.data['dersAdi'],
-          element.data['yanlisSayisi'], element.data['tarih']);
+      Soru soru = Soru(
+          element.data['soruSayisi'],
+          element.data['dersAdi'],
+          element.data['yanlisSayisi'],
+          DateTime.parse(element.data['tarih'].toDate().toString()),
+          element.data['strTarih']);
       currentList.add(soru);
     });
+
+    currentList.sort((a, b) => a.tarih.compareTo(b.tarih));
+    currentList = currentList.reversed.toList();
 
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -317,21 +338,24 @@ class _YavuzState extends State<Yavuz> {
                 child: collectiveData(currentData),
                 scrollDirection: Axis.horizontal,
               ),
-              ListView(
-                shrinkWrap: true,
-                children: [
-                  for (Soru soru in currentList.reversed)
-                    Card(
+              Expanded(
+                child: ListView.builder(
+                  itemCount: currentList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Card(
                       child: ListTile(
-                        onLongPress:
-                            isAdmin ? () => delete(soru, context) : null,
+                        onLongPress: isAdmin
+                            ? () => delete(currentList[index], context)
+                            : null,
                         title: Text(
-                            'Soru Sayısı: ${soru.soruSayisi}, Yanlış Sayısı: ${soru.yanlisSayisi}'),
-                        subtitle: Text('${soru.dersAdi} \n${soru.tarih}'),
+                            'Soru Sayısı: ${currentList[index].soruSayisi}, Yanlış Sayısı: ${currentList[index].yanlisSayisi}'),
+                        subtitle: Text(
+                            '${currentList[index].dersAdi} \n${currentList[index].strTarih}'),
                         isThreeLine: true,
                       ),
-                    ),
-                ],
+                    );
+                  },
+                ),
               ),
             ])
           : Taha(),
