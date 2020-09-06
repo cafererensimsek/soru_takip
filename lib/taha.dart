@@ -62,29 +62,52 @@ class _TahaState extends State<Taha> {
   Widget collectiveDataTaha(QuerySnapshot current) {
     List<int> collective = getCollectiveDataTaha(current);
 
-    return DataTable(columns: [
-      DataColumn(label: Text('Mat')),
-      DataColumn(label: Text('Geo')),
-      DataColumn(label: Text('Fiz')),
-      DataColumn(label: Text('Kim')),
-      DataColumn(label: Text('Bio')),
-    ], rows: [
-      DataRow(cells: [
-        for (var i = 0; i < 10; i += 2) DataCell(Text('${collective[i]}')),
-      ]),
-      DataRow(cells: [
-        for (var i = 1; i < 10; i += 2) DataCell(Text('${collective[i]}')),
-      ]),
-      DataRow(cells: [
-        for (var i = 0; i < 10; i += 2)
-          DataCell(Text('% ' +
-              ((collective[i] - collective[i + 1]) / collective[i] * 100)
-                  .toStringAsFixed(2))),
-      ]),
-    ]);
+    return DataTable(
+      columns: [
+        DataColumn(
+            label: Text('Mat',
+                style: TextStyle(color: Colors.white, fontSize: 15))),
+        DataColumn(
+            label: Text('Geo',
+                style: TextStyle(color: Colors.white, fontSize: 15))),
+        DataColumn(
+            label: Text('Fiz',
+                style: TextStyle(color: Colors.white, fontSize: 15))),
+        DataColumn(
+            label: Text('Kim',
+                style: TextStyle(color: Colors.white, fontSize: 15))),
+        DataColumn(
+            label: Text('Bio',
+                style: TextStyle(color: Colors.white, fontSize: 15))),
+      ],
+      rows: [
+        DataRow(cells: [
+          for (var i = 0; i < 10; i += 2)
+            DataCell(Text('${collective[i]}',
+                style: TextStyle(color: Colors.white, fontSize: 15))),
+        ]),
+        DataRow(cells: [
+          for (var i = 1; i < 10; i += 2)
+            DataCell(Text('${collective[i]}',
+                style: TextStyle(color: Colors.white, fontSize: 15))),
+        ]),
+        DataRow(cells: [
+          for (var i = 0; i < 10; i += 2)
+            DataCell(Text(
+                '% ' +
+                    ((collective[i] - collective[i + 1]) / collective[i] * 100)
+                        .toStringAsFixed(2),
+                style: TextStyle(color: Colors.white, fontSize: 15))),
+        ]),
+      ],
+      columnSpacing: 25,
+    );
   }
 
-  void delete(Soru soru, BuildContext ctx) {
+  void delete(
+    Soru soru,
+    BuildContext ctx,
+  ) {
     showDialog(
       context: ctx,
       builder: (BuildContext context) => AlertDialog(
@@ -114,8 +137,7 @@ class _TahaState extends State<Taha> {
     );
   }
 
-  Widget soruListDisplay(
-      BuildContext context, CollectionReference database, bool isAdmin) {
+  Widget soruListDisplay(BuildContext context, CollectionReference database) {
     final currentData = Provider.of<QuerySnapshot>(context);
 
     List<Soru> currentList = [];
@@ -133,6 +155,7 @@ class _TahaState extends State<Taha> {
     currentList = currentList.reversed.toList();
 
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Column(children: [
         SizedBox(height: 25),
         SingleChildScrollView(
@@ -144,10 +167,9 @@ class _TahaState extends State<Taha> {
             itemCount: currentList.length,
             itemBuilder: (BuildContext context, int index) {
               return Card(
+                color: Colors.deepPurple,
                 child: ListTile(
-                  onLongPress: isAdmin
-                      ? () => delete(currentList[index], context)
-                      : null,
+                  onLongPress: () => delete(currentList[index], context),
                   title: Text(
                       'Soru Sayısı: ${currentList[index].soruSayisi}, Yanlış Sayısı: ${currentList[index].yanlisSayisi}'),
                   subtitle: Text(
@@ -169,16 +191,13 @@ class _TahaState extends State<Taha> {
   @override
   Widget build(BuildContext context) {
     CollectionReference database = Firestore.instance.collection('taha');
-/*     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
-    FirebaseUser user = arguments['user']; */
-    bool isAdmin = true; /* user.email == 'tahanuman04@gmail.com'; */
     return StreamProvider<QuerySnapshot>.value(
       value: currentData,
       child: StreamBuilder(
         stream: currentData,
         builder: (context, snapshot) {
           return snapshot.hasData
-              ? soruListDisplay(context, database, isAdmin)
+              ? soruListDisplay(context, database)
               : loading(context);
         },
       ),

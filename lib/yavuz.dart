@@ -23,6 +23,8 @@ class _YavuzState extends State<Yavuz> {
   String strTarih;
   int _selectedIndex = 0;
   String isim = 'yavuz';
+  Color tahaIcon = Colors.black;
+  Color yavuzIcon = Colors.deepPurple;
   List<String> dersListesi = [
     'Matematik',
     'Fen',
@@ -99,16 +101,16 @@ class _YavuzState extends State<Yavuz> {
           child: DropdownButton<String>(
             hint: Text(
               'Ders',
-              style: TextStyle(fontSize: 15, color: Colors.white),
+              style: TextStyle(fontSize: 15, color: Colors.black),
             ),
             value: _dersAdi,
-            icon: Icon(Icons.arrow_downward, color: Colors.white),
+            icon: Icon(Icons.arrow_downward, color: Colors.black),
             iconSize: 24,
             elevation: 16,
-            style: TextStyle(color: Colors.amber, fontSize: 20),
+            style: TextStyle(color: Colors.black, fontSize: 20),
             underline: Container(
               height: 2,
-              color: Colors.white,
+              color: Colors.black,
             ),
             onChanged: (String newValue) {
               setState(() {
@@ -129,7 +131,7 @@ class _YavuzState extends State<Yavuz> {
 
   void addSoru(BuildContext ctx) {
     showModalBottomSheet(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.cyan[600],
       context: ctx,
       builder: (BuildContext context) {
         return Column(
@@ -140,7 +142,7 @@ class _YavuzState extends State<Yavuz> {
               child: StatefulBuilder(
                 builder: (BuildContext context, setState) {
                   return FlatButton(
-                      color: Colors.white,
+                      color: Colors.transparent,
                       onPressed: () => showDatePicker(
                             context: context,
                             initialDate: DateTime.now(),
@@ -160,7 +162,7 @@ class _YavuzState extends State<Yavuz> {
                         padding: const EdgeInsets.all(10),
                         child: _tarih == null
                             ? Text('Tarih Seç', style: TextStyle(fontSize: 20))
-                            : Text(strTarih),
+                            : Text(strTarih, style: TextStyle(fontSize: 20)),
                       ));
                 },
               ),
@@ -175,7 +177,7 @@ class _YavuzState extends State<Yavuz> {
                 keyboardType: TextInputType.number),
             dropdownMenu(),
             FlatButton(
-                color: Colors.amber,
+                color: Colors.transparent,
                 onPressed: () => ekle(
                       context,
                       _soruSayisi,
@@ -185,7 +187,7 @@ class _YavuzState extends State<Yavuz> {
                       _tarih,
                     ),
                 child: Text('Ekle',
-                    style: TextStyle(color: Colors.white, fontSize: 20))),
+                    style: TextStyle(color: Colors.black, fontSize: 20))),
           ],
         );
       },
@@ -244,26 +246,46 @@ class _YavuzState extends State<Yavuz> {
   Widget collectiveData(QuerySnapshot current) {
     List<int> collective = getCollectiveData(current);
 
-    return DataTable(columns: [
-      DataColumn(label: Text('Mat')),
-      DataColumn(label: Text('Fen')),
-      DataColumn(label: Text('TR')),
-      DataColumn(label: Text('Sos')),
-      DataColumn(label: Text('İng')),
-    ], rows: [
-      DataRow(cells: [
-        for (var i = 0; i < 10; i += 2) DataCell(Text('${collective[i]}')),
-      ]),
-      DataRow(cells: [
-        for (var i = 1; i < 10; i += 2) DataCell(Text('${collective[i]}')),
-      ]),
-      DataRow(cells: [
-        for (var i = 0; i < 10; i += 2)
-          DataCell(Text('% ' +
-              ((collective[i] - collective[i + 1]) / collective[i] * 100)
-                  .toStringAsFixed(2))),
-      ]),
-    ]);
+    return DataTable(
+      columns: [
+        DataColumn(
+            label: Text('Mat',
+                style: TextStyle(color: Colors.white, fontSize: 15))),
+        DataColumn(
+            label: Text('Fen',
+                style: TextStyle(color: Colors.white, fontSize: 15))),
+        DataColumn(
+            label: Text('TR',
+                style: TextStyle(color: Colors.white, fontSize: 15))),
+        DataColumn(
+            label: Text('Sos',
+                style: TextStyle(color: Colors.white, fontSize: 15))),
+        DataColumn(
+            label: Text('İng',
+                style: TextStyle(color: Colors.white, fontSize: 15))),
+      ],
+      rows: [
+        DataRow(cells: [
+          for (var i = 0; i < 10; i += 2)
+            DataCell(Text('${collective[i]}',
+                style: TextStyle(color: Colors.white, fontSize: 15))),
+        ]),
+        DataRow(cells: [
+          for (var i = 1; i < 10; i += 2)
+            DataCell(Text('${collective[i]}',
+                style: TextStyle(color: Colors.white, fontSize: 15))),
+        ]),
+        DataRow(cells: [
+          for (var i = 0; i < 10; i += 2)
+            DataCell(Text(
+                '% ' +
+                    ((collective[i] - collective[i + 1]) / collective[i] * 100)
+                        .toStringAsFixed(2),
+                style: TextStyle(color: Colors.white, fontSize: 15))),
+        ]),
+      ],
+      columnSpacing: 25,
+    );
   }
 
   void delete(Soru soru, BuildContext ctx) {
@@ -300,17 +322,51 @@ class _YavuzState extends State<Yavuz> {
     setState(() {
       _selectedIndex = index;
       if (_selectedIndex == 0) {
+        tahaIcon = Colors.black;
+        yavuzIcon = Colors.deepPurple;
         isim = 'yavuz';
         dersListesi = ['Matematik', 'Fen', 'Türkçe', 'Sosyal', 'İngilizce'];
       } else {
+        tahaIcon = Colors.deepPurple;
+        yavuzIcon = Colors.black;
         isim = 'taha';
         dersListesi = ['Matematik', 'Geometri', 'Fizik', 'Kimya', 'Biyoloji'];
       }
     });
   }
 
-  Widget soruListDisplay(
-      BuildContext context, CollectionReference database, bool isAdmin) {
+  Widget displayYavuz(
+    QuerySnapshot currentData,
+    List<Soru> currentList,
+  ) {
+    return Column(children: [
+      SizedBox(height: 25),
+      SingleChildScrollView(
+        child: collectiveData(currentData),
+        scrollDirection: Axis.horizontal,
+      ),
+      Expanded(
+        child: ListView.builder(
+          itemCount: currentList.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Card(
+              color: Colors.deepPurple,
+              child: ListTile(
+                onLongPress: () => delete(currentList[index], context),
+                title: Text(
+                    'Soru Sayısı: ${currentList[index].soruSayisi}, Yanlış Sayısı: ${currentList[index].yanlisSayisi}'),
+                subtitle: Text(
+                    '${currentList[index].dersAdi} \n${currentList[index].strTarih}'),
+                isThreeLine: true,
+              ),
+            );
+          },
+        ),
+      ),
+    ]);
+  }
+
+  Widget soruListDisplay(BuildContext context, CollectionReference database) {
     final currentData = Provider.of<QuerySnapshot>(context);
 
     List<Soru> currentList = [];
@@ -327,54 +383,48 @@ class _YavuzState extends State<Yavuz> {
     currentList.sort((a, b) => a.tarih.compareTo(b.tarih));
     currentList = currentList.reversed.toList();
 
+    List<dynamic> bodyList = [displayYavuz(currentData, currentList), Taha()];
+
     return Scaffold(
+      backgroundColor: Colors.black,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Builder(
         builder: (BuildContext context) {
           return FloatingActionButton(
             onPressed: () => addSoru(context),
-            child: Icon(Icons.add),
+            child: Icon(Icons.add, color: Colors.black),
+            backgroundColor: Colors.limeAccent,
           );
         },
       ),
-      body: _selectedIndex == 0
-          ? Column(children: [
-              SizedBox(height: 25),
-              SingleChildScrollView(
-                child: collectiveData(currentData),
-                scrollDirection: Axis.horizontal,
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: currentList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Card(
-                      child: ListTile(
-                        onLongPress: isAdmin
-                            ? () => delete(currentList[index], context)
-                            : null,
-                        title: Text(
-                            'Soru Sayısı: ${currentList[index].soruSayisi}, Yanlış Sayısı: ${currentList[index].yanlisSayisi}'),
-                        subtitle: Text(
-                            '${currentList[index].dersAdi} \n${currentList[index].strTarih}'),
-                        isThreeLine: true,
-                      ),
-                    );
-                  },
+      body: bodyList[_selectedIndex],
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.lime,
+        elevation: 25,
+        shape: CircularNotchedRectangle(),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                IconButton(
+                  icon: Icon(Icons.school, color: yavuzIcon),
+                  onPressed: () => _navigate(0),
                 ),
-              ),
-            ])
-          : Taha(),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.school), label: 'Yavuz'),
-          BottomNavigationBarItem(icon: Icon(Icons.school), label: 'Taha'),
-        ],
-        backgroundColor: Colors.black,
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.white,
-        currentIndex: _selectedIndex,
-        onTap: _navigate,
+                Text('Yavuz'),
+              ],
+            ),
+            Row(
+              children: [
+                Text('Taha'),
+                IconButton(
+                    icon: Icon(Icons.school, color: tahaIcon),
+                    onPressed: () => _navigate(1)),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -386,16 +436,13 @@ class _YavuzState extends State<Yavuz> {
   @override
   Widget build(BuildContext context) {
     CollectionReference database = Firestore.instance.collection('yavuz');
-/*     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
-    FirebaseUser user = arguments['user']; */
-    bool isAdmin = true; /* user.email == 'yavuzselimsimsek07@gmail.com'; */
     return StreamProvider<QuerySnapshot>.value(
       value: currentData,
       child: StreamBuilder(
         stream: currentData,
         builder: (context, snapshot) {
           return snapshot.hasData
-              ? soruListDisplay(context, database, isAdmin)
+              ? soruListDisplay(context, database)
               : loading(context);
         },
       ),

@@ -35,22 +35,22 @@ Widget textInput(
   return Padding(
     padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
     child: TextField(
-      cursorColor: Colors.white,
+      cursorColor: Colors.black,
       controller: controller,
       obscureText: obscure,
-      style: TextStyle(color: Colors.white),
+      style: TextStyle(color: Colors.black),
       keyboardType: keyboardType,
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: TextStyle(color: Colors.white),
+        hintStyle: TextStyle(color: Colors.black),
         icon: icon,
         enabledBorder:
-            UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(
               Radius.circular(5),
             ),
-            borderSide: BorderSide(color: Colors.white)),
+            borderSide: BorderSide(color: Colors.black)),
       ),
     ),
   );

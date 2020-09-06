@@ -5,6 +5,11 @@ class Soru {
   final String strTarih;
   final DateTime tarih;
 
-  Soru(this.soruSayisi, this.dersAdi, this.yanlisSayisi, this.tarih,
-      this.strTarih);
+  Soru(
+    this.soruSayisi,
+    this.dersAdi,
+    this.yanlisSayisi,
+    this.tarih,
+    this.strTarih,
+  );
 }
