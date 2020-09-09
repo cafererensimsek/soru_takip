@@ -61,30 +61,30 @@ Widget dataTable(QuerySnapshot current, List<String> dersler) {
     columns: [
       DataColumn(
           label: Text(dersler[0],
-              style: TextStyle(color: Colors.white, fontSize: 15))),
+              style: TextStyle(color: Colors.black, fontSize: 15))),
       DataColumn(
           label: Text(dersler[1],
-              style: TextStyle(color: Colors.white, fontSize: 15))),
+              style: TextStyle(color: Colors.black, fontSize: 15))),
       DataColumn(
           label: Text(dersler[2],
-              style: TextStyle(color: Colors.white, fontSize: 15))),
+              style: TextStyle(color: Colors.black, fontSize: 15))),
       DataColumn(
           label: Text(dersler[3],
-              style: TextStyle(color: Colors.white, fontSize: 15))),
+              style: TextStyle(color: Colors.black, fontSize: 15))),
       DataColumn(
           label: Text(dersler[4],
-              style: TextStyle(color: Colors.white, fontSize: 15))),
+              style: TextStyle(color: Colors.black, fontSize: 15))),
     ],
     rows: [
       DataRow(cells: [
         for (var i = 0; i < 10; i += 2)
           DataCell(Text('${collective[i]}',
-              style: TextStyle(color: Colors.white, fontSize: 15))),
+              style: TextStyle(color: Colors.black, fontSize: 15))),
       ]),
       DataRow(cells: [
         for (var i = 1; i < 10; i += 2)
           DataCell(Text('${collective[i]}',
-              style: TextStyle(color: Colors.white, fontSize: 15))),
+              style: TextStyle(color: Colors.black, fontSize: 15))),
       ]),
       DataRow(cells: [
         for (var i = 0; i < 10; i += 2)
@@ -92,7 +92,7 @@ Widget dataTable(QuerySnapshot current, List<String> dersler) {
               '% ' +
                   ((collective[i] - collective[i + 1]) / collective[i] * 100)
                       .toStringAsFixed(2),
-              style: TextStyle(color: Colors.white, fontSize: 15))),
+              style: TextStyle(color: Colors.black, fontSize: 15))),
       ]),
     ],
     columnSpacing: 25,

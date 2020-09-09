@@ -136,28 +136,28 @@ class _HomeState extends State<Home> {
               child: StatefulBuilder(
                 builder: (BuildContext context, setState) {
                   return FlatButton(
-                      color: Colors.transparent,
-                      onPressed: () => showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(2020),
-                            lastDate: DateTime.now(),
-                          ).then((pickedDate) {
-                            if (pickedDate == null) {
-                              return;
-                            }
-                            setState(() {
-                              _tarih = pickedDate;
-                              strTarih =
-                                  DateFormat('dd MM yyyy').format(pickedDate);
-                            });
-                          }),
-                      child: Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: _tarih == null
-                            ? Text('Tarih Seç', style: TextStyle(fontSize: 20))
-                            : Text(strTarih, style: TextStyle(fontSize: 20)),
-                      ));
+                    color: Colors.transparent,
+                    onPressed: () => showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2020),
+                      lastDate: DateTime.now(),
+                    ).then((pickedDate) {
+                      if (pickedDate == null) {
+                        return;
+                      }
+                      setState(() {
+                        _tarih = pickedDate;
+                        strTarih = DateFormat('dd MM yyyy').format(pickedDate);
+                      });
+                    }),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: _tarih == null
+                          ? Icon(Icons.date_range, size: 40)
+                          : Text(strTarih, style: TextStyle(fontSize: 20)),
+                    ),
+                  );
                 },
               ),
             ),
@@ -180,8 +180,7 @@ class _HomeState extends State<Home> {
                       strTarih,
                       _tarih,
                     ),
-                child: Text('Ekle',
-                    style: TextStyle(color: Colors.black, fontSize: 20))),
+                child: Icon(Icons.playlist_add, size: 40)),
           ],
         );
       },
@@ -193,11 +192,11 @@ class _HomeState extends State<Home> {
       _selectedIndex = index;
       if (_selectedIndex == 0) {
         tahaIcon = Colors.black;
-        yavuzIcon = Colors.deepPurple;
+        yavuzIcon = Colors.blue;
         isim = 'yavuz';
         dersListesi = ['Matematik', 'Fen', 'Türkçe', 'Sosyal', 'İngilizce'];
       } else {
-        tahaIcon = Colors.deepPurple;
+        tahaIcon = Colors.blue;
         yavuzIcon = Colors.black;
         isim = 'taha';
         dersListesi = ['Matematik', 'Geometri', 'Fizik', 'Kimya', 'Biyoloji'];
@@ -222,20 +221,20 @@ class _HomeState extends State<Home> {
     currentList = currentList.reversed.toList();
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.teal,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Builder(
         builder: (BuildContext context) {
           return FloatingActionButton(
             onPressed: () => addSoru(context),
             child: Icon(Icons.add, color: Colors.black),
-            backgroundColor: Colors.limeAccent,
+            backgroundColor: Colors.white,
           );
         },
       ),
       body: display(currentData, currentList, dersListesi, isim),
       bottomNavigationBar: BottomAppBar(
-        color: Colors.lime,
+        color: Colors.white,
         elevation: 25,
         shape: CircularNotchedRectangle(),
         child: Row(
@@ -248,12 +247,12 @@ class _HomeState extends State<Home> {
                   icon: Icon(Icons.school, color: yavuzIcon),
                   onPressed: () => _navigate(0),
                 ),
-                Text('Yavuz'),
+                Text('Yavuz', style: TextStyle(color: yavuzIcon)),
               ],
             ),
             Row(
               children: [
-                Text('Taha'),
+                Text('Taha', style: TextStyle(color: tahaIcon)),
                 IconButton(
                     icon: Icon(Icons.school, color: tahaIcon),
                     onPressed: () => _navigate(1)),

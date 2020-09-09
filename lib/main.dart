@@ -10,7 +10,7 @@ class SoruTakip extends StatelessWidget {
       title: 'Soru Takip',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        dividerColor: Colors.white,
+        dividerColor: Colors.black,
       ),
       home: Home(),
     );
