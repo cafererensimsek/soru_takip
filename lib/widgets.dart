@@ -55,20 +55,3 @@ Widget textInput(
     ),
   );
 }
-
-Widget floatingAction(
-    {String label,
-    IconData icon,
-    Function onpressed,
-    num fontSize = 10,
-    BuildContext context}) {
-  return FloatingActionButton.extended(
-    elevation: 10,
-    label: Text(
-      label,
-      style: TextStyle(color: Colors.black),
-    ),
-    icon: Icon(icon, color: Colors.black),
-    onPressed: onpressed,
-  );
-}

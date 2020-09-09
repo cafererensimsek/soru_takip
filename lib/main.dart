@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:soru_takip/taha.dart';
-import 'package:soru_takip/yavuz.dart';
+import 'package:soru_takip/home.dart';
 
 void main() => runApp(SoruTakip());
 
@@ -13,11 +12,7 @@ class SoruTakip extends StatelessWidget {
       theme: ThemeData(
         dividerColor: Colors.white,
       ),
-      routes: {
-        '/': (BuildContext context) => Yavuz(),
-        '/taha': (BuildContext context) => Taha(),
-      },
-      initialRoute: '/',
+      home: Home(),
     );
   }
 }

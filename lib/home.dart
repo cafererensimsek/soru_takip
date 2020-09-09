@@ -2,20 +2,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
+import 'package:soru_takip/list.dart';
 import 'package:soru_takip/soru.dart';
-import 'package:soru_takip/taha.dart';
 import 'package:soru_takip/widgets.dart';
 import 'package:intl/intl.dart';
 
-class Yavuz extends StatefulWidget {
+class Home extends StatefulWidget {
   @override
-  _YavuzState createState() => _YavuzState();
+  _HomeState createState() => _HomeState();
 }
 
-class _YavuzState extends State<Yavuz> {
+class _HomeState extends State<Home> {
   final soruSayisiController = TextEditingController();
   final yanlisSayisiController = TextEditingController();
-  final dersAdiController = TextEditingController();
   String _soruSayisi;
   String _yanlisSayisi;
   String _dersAdi;
@@ -25,19 +24,14 @@ class _YavuzState extends State<Yavuz> {
   String isim = 'yavuz';
   Color tahaIcon = Colors.black;
   Color yavuzIcon = Colors.deepPurple;
-  List<String> dersListesi = [
-    'Matematik',
-    'Fen',
-    'Türkçe',
-    'Sosyal',
-    'İngilizce',
-  ];
+  List<String> dersListesi;
 
   @override
   void initState() {
     super.initState();
     soruSayisiController.addListener(changeSoruSayisi);
     yanlisSayisiController.addListener(changeYanlisSayisi);
+    this.dersListesi = ['Matematik', 'Fen', 'Türkçe', 'Sosyal', 'İngilizce'];
   }
 
   @override
@@ -194,130 +188,6 @@ class _YavuzState extends State<Yavuz> {
     );
   }
 
-  List<int> getCollectiveData(QuerySnapshot current) {
-    int toplamMat = 0;
-    int toplamFen = 0;
-    int toplamSos = 0;
-    int toplamTR = 0;
-    int toplamIng = 0;
-    int toplamMatY = 0;
-    int toplamFenY = 0;
-    int toplamSosY = 0;
-    int toplamTRY = 0;
-    int toplamIngY = 0;
-    current.documents.forEach((element) {
-      switch (element.data['dersAdi']) {
-        case 'Matematik':
-          toplamMat += element.data['soruSayisi'];
-          toplamMatY += element.data['yanlisSayisi'];
-          break;
-        case 'Fen':
-          toplamFen += element.data['soruSayisi'];
-          toplamFenY += element.data['yanlisSayisi'];
-          break;
-        case 'Sosyal':
-          toplamSos += element.data['soruSayisi'];
-          toplamSosY += element.data['yanlisSayisi'];
-          break;
-        case 'Türkçe':
-          toplamTR += element.data['soruSayisi'];
-          toplamTRY += element.data['yanlisSayisi'];
-          break;
-        case 'İngilizce':
-          toplamIng += element.data['soruSayisi'];
-          toplamIngY += element.data['yanlisSayisi'];
-          break;
-      }
-    });
-    return [
-      toplamMat,
-      toplamMatY,
-      toplamFen,
-      toplamFenY,
-      toplamTR,
-      toplamTRY,
-      toplamSos,
-      toplamSosY,
-      toplamIng,
-      toplamIngY
-    ];
-  }
-
-  Widget collectiveData(QuerySnapshot current) {
-    List<int> collective = getCollectiveData(current);
-
-    return DataTable(
-      columns: [
-        DataColumn(
-            label: Text('Mat',
-                style: TextStyle(color: Colors.white, fontSize: 15))),
-        DataColumn(
-            label: Text('Fen',
-                style: TextStyle(color: Colors.white, fontSize: 15))),
-        DataColumn(
-            label: Text('TR',
-                style: TextStyle(color: Colors.white, fontSize: 15))),
-        DataColumn(
-            label: Text('Sos',
-                style: TextStyle(color: Colors.white, fontSize: 15))),
-        DataColumn(
-            label: Text('İng',
-                style: TextStyle(color: Colors.white, fontSize: 15))),
-      ],
-      rows: [
-        DataRow(cells: [
-          for (var i = 0; i < 10; i += 2)
-            DataCell(Text('${collective[i]}',
-                style: TextStyle(color: Colors.white, fontSize: 15))),
-        ]),
-        DataRow(cells: [
-          for (var i = 1; i < 10; i += 2)
-            DataCell(Text('${collective[i]}',
-                style: TextStyle(color: Colors.white, fontSize: 15))),
-        ]),
-        DataRow(cells: [
-          for (var i = 0; i < 10; i += 2)
-            DataCell(Text(
-                '% ' +
-                    ((collective[i] - collective[i + 1]) / collective[i] * 100)
-                        .toStringAsFixed(2),
-                style: TextStyle(color: Colors.white, fontSize: 15))),
-        ]),
-      ],
-      columnSpacing: 25,
-    );
-  }
-
-  void delete(Soru soru, BuildContext ctx) {
-    showDialog(
-      context: ctx,
-      builder: (BuildContext context) => AlertDialog(
-        elevation: 24,
-        title: Text('Silinecek!'),
-        content: Text('Silmek istediğinize emin misiniz?'),
-        actions: [
-          SimpleDialogOption(
-            child: Text('Hayır'),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          SimpleDialogOption(
-            child: Text('Evet'),
-            onPressed: () {
-              Firestore.instance
-                  .collection('yavuz')
-                  .document(soru.strTarih + " " + soru.dersAdi)
-                  .delete();
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      ),
-      barrierDismissible: true,
-    );
-  }
-
   void _navigate(int index) {
     setState(() {
       _selectedIndex = index;
@@ -335,40 +205,8 @@ class _YavuzState extends State<Yavuz> {
     });
   }
 
-  Widget displayYavuz(
-    QuerySnapshot currentData,
-    List<Soru> currentList,
-  ) {
-    return Column(children: [
-      SizedBox(height: 25),
-      SingleChildScrollView(
-        child: collectiveData(currentData),
-        scrollDirection: Axis.horizontal,
-      ),
-      Expanded(
-        child: ListView.builder(
-          itemCount: currentList.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Card(
-              color: Colors.deepPurple,
-              child: ListTile(
-                onLongPress: () => delete(currentList[index], context),
-                title: Text(
-                    'Soru Sayısı: ${currentList[index].soruSayisi}, Yanlış Sayısı: ${currentList[index].yanlisSayisi}'),
-                subtitle: Text(
-                    '${currentList[index].dersAdi} \n${currentList[index].strTarih}'),
-                isThreeLine: true,
-              ),
-            );
-          },
-        ),
-      ),
-    ]);
-  }
-
-  Widget soruListDisplay(BuildContext context, CollectionReference database) {
+  Widget soruListDisplay(BuildContext context) {
     final currentData = Provider.of<QuerySnapshot>(context);
-
     List<Soru> currentList = [];
     currentData.documents.forEach((element) {
       Soru soru = Soru(
@@ -383,8 +221,6 @@ class _YavuzState extends State<Yavuz> {
     currentList.sort((a, b) => a.tarih.compareTo(b.tarih));
     currentList = currentList.reversed.toList();
 
-    List<dynamic> bodyList = [displayYavuz(currentData, currentList), Taha()];
-
     return Scaffold(
       backgroundColor: Colors.black,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -397,7 +233,7 @@ class _YavuzState extends State<Yavuz> {
           );
         },
       ),
-      body: bodyList[_selectedIndex],
+      body: display(currentData, currentList, dersListesi, isim),
       bottomNavigationBar: BottomAppBar(
         color: Colors.lime,
         elevation: 25,
@@ -429,21 +265,21 @@ class _YavuzState extends State<Yavuz> {
     );
   }
 
-  Stream<QuerySnapshot> get currentData {
-    return Firestore.instance.collection('yavuz').snapshots();
+  Stream<QuerySnapshot> get data {
+    return Firestore.instance.collection(isim).snapshots();
   }
 
   @override
   Widget build(BuildContext context) {
-    CollectionReference database = Firestore.instance.collection('yavuz');
     return StreamProvider<QuerySnapshot>.value(
-      value: currentData,
+      value: data,
       child: StreamBuilder(
-        stream: currentData,
+        stream: data,
         builder: (context, snapshot) {
-          return snapshot.hasData
-              ? soruListDisplay(context, database)
-              : loading(context);
+          if (!snapshot.hasData) {
+            return loading(context);
+          }
+          return soruListDisplay(context);
         },
       ),
     );
