@@ -22,15 +22,17 @@ Widget display(
           itemCount: currentList.length,
           itemBuilder: (BuildContext context, int index) {
             return Card(
-              elevation: 3,
+              elevation: 1,
               child: ListTile(
                 onLongPress: () => delete(currentList[index], context, isim),
                 title: Row(
                   children: [
-                    Icon(Icons.done, color: Colors.black, size: 30),
+                    Icon(Icons.done, color: Colors.black, size: 20),
                     SizedBox(width: 5),
                     Text(
-                      '${currentList[index].soruSayisi}',
+                      currentList[index].soruSayisi > 10
+                          ? '${currentList[index].soruSayisi}'
+                          : '  ${currentList[index].soruSayisi}',
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 22,
@@ -52,11 +54,11 @@ Widget display(
                 ),
                 subtitle: Row(
                   children: [
-                    Icon(Icons.error, color: Colors.black, size: 30),
+                    Icon(Icons.error, color: Colors.black, size: 20),
                     SizedBox(width: 5),
                     Text(
                       currentList[index].yanlisSayisi < 10
-                          ? '0${currentList[index].yanlisSayisi}'
+                          ? '  ${currentList[index].yanlisSayisi}'
                           : '${currentList[index].yanlisSayisi}',
                       style: TextStyle(
                         color: Colors.black,
@@ -78,7 +80,8 @@ Widget display(
                   ],
                 ),
                 trailing: Icon(Icons.delete, color: Colors.black, size: 30),
-                contentPadding: EdgeInsets.fromLTRB(25, 10, 25, 10),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                 tileColor: Colors.tealAccent,
               ),
             );

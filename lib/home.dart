@@ -191,13 +191,13 @@ class _HomeState extends State<Home> {
     setState(() {
       _selectedIndex = index;
       if (_selectedIndex == 0) {
-        tahaIcon = Colors.black;
+        tahaIcon = Colors.white;
         yavuzIcon = Colors.blue;
         isim = 'yavuz';
         dersListesi = ['Matematik', 'Fen', 'Türkçe', 'Sosyal', 'İngilizce'];
       } else {
         tahaIcon = Colors.blue;
-        yavuzIcon = Colors.black;
+        yavuzIcon = Colors.white;
         isim = 'taha';
         dersListesi = ['Matematik', 'Geometri', 'Fizik', 'Kimya', 'Biyoloji'];
       }
@@ -221,43 +221,41 @@ class _HomeState extends State<Home> {
     currentList = currentList.reversed.toList();
 
     return Scaffold(
-      backgroundColor: Colors.teal,
+      backgroundColor: Colors.teal[300],
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Builder(
         builder: (BuildContext context) {
           return FloatingActionButton(
             onPressed: () => addSoru(context),
-            child: Icon(Icons.add, color: Colors.black),
-            backgroundColor: Colors.white,
+            child: Icon(Icons.add, color: Colors.white),
+            backgroundColor: Colors.black,
           );
         },
       ),
       body: display(currentData, currentList, dersListesi, isim),
       bottomNavigationBar: BottomAppBar(
-        color: Colors.white,
+        color: Colors.black,
         elevation: 25,
         shape: CircularNotchedRectangle(),
         child: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: [
-                IconButton(
-                  icon: Icon(Icons.school, color: yavuzIcon),
-                  onPressed: () => _navigate(0),
+            FlatButton(
+              child: Row(children: [
+                Icon(Icons.school, color: yavuzIcon),
+                Text('   Yavuz', style: TextStyle(color: yavuzIcon)),
+              ]),
+              onPressed: () => _navigate(0),
+            ),
+            FlatButton(
+                child: Row(
+                  children: [
+                    Text('Taha   ', style: TextStyle(color: tahaIcon)),
+                    Icon(Icons.school, color: tahaIcon),
+                  ],
                 ),
-                Text('Yavuz', style: TextStyle(color: yavuzIcon)),
-              ],
-            ),
-            Row(
-              children: [
-                Text('Taha', style: TextStyle(color: tahaIcon)),
-                IconButton(
-                    icon: Icon(Icons.school, color: tahaIcon),
-                    onPressed: () => _navigate(1)),
-              ],
-            ),
+                onPressed: () => _navigate(1)),
           ],
         ),
       ),
