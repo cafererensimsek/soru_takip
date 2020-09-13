@@ -14,7 +14,7 @@ Widget display(
     children: [
       SizedBox(height: 25),
       SingleChildScrollView(
-        child: dataTable(currentData, dersListesi, isim),
+        child: dataTable(currentData, dersListesi),
         scrollDirection: Axis.horizontal,
       ),
       Expanded(

@@ -20,10 +20,9 @@ class _HomeState extends State<Home> {
   String _dersAdi;
   DateTime _tarih;
   String strTarih;
-  int _selectedIndex = 0;
   String isim = 'yavuz';
-  Color tahaIcon = Colors.black;
-  Color yavuzIcon = Colors.deepPurple;
+  Color tahaIcon = Colors.white;
+  Color yavuzIcon = Colors.blue;
   List<String> dersListesi;
 
   @override
@@ -189,8 +188,7 @@ class _HomeState extends State<Home> {
 
   void _navigate(int index) {
     setState(() {
-      _selectedIndex = index;
-      if (_selectedIndex == 0) {
+      if (index == 0) {
         tahaIcon = Colors.white;
         yavuzIcon = Colors.blue;
         isim = 'yavuz';
@@ -212,6 +210,7 @@ class _HomeState extends State<Home> {
           'Kimya',
           'Biyoloji',
           'Türkçe',
+          'Sosyal Bilimler',
         ];
       }
     });
