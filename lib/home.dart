@@ -194,12 +194,25 @@ class _HomeState extends State<Home> {
         tahaIcon = Colors.white;
         yavuzIcon = Colors.blue;
         isim = 'yavuz';
-        dersListesi = ['Matematik', 'Fen', 'Türkçe', 'Sosyal', 'İngilizce'];
+        dersListesi = [
+          'Matematik',
+          'Fen',
+          'Türkçe',
+          'Sosyal',
+          'İngilizce',
+        ];
       } else {
         tahaIcon = Colors.blue;
         yavuzIcon = Colors.white;
         isim = 'taha';
-        dersListesi = ['Matematik', 'Geometri', 'Fizik', 'Kimya', 'Biyoloji'];
+        dersListesi = [
+          'Matematik',
+          'Geometri',
+          'Fizik',
+          'Kimya',
+          'Biyoloji',
+          'Türkçe',
+        ];
       }
     });
   }
@@ -207,15 +220,17 @@ class _HomeState extends State<Home> {
   Widget soruListDisplay(BuildContext context) {
     final currentData = Provider.of<QuerySnapshot>(context);
     List<Soru> currentList = [];
-    currentData.documents.forEach((element) {
-      Soru soru = Soru(
-          element.data['soruSayisi'],
-          element.data['dersAdi'],
-          element.data['yanlisSayisi'],
-          DateTime.parse(element.data['tarih'].toDate().toString()),
-          element.data['strTarih']);
-      currentList.add(soru);
-    });
+    if (currentData != null) {
+      currentData.documents.forEach((element) {
+        Soru soru = Soru(
+            element.data['soruSayisi'],
+            element.data['dersAdi'],
+            element.data['yanlisSayisi'],
+            DateTime.parse(element.data['tarih'].toDate().toString()),
+            element.data['strTarih']);
+        currentList.add(soru);
+      });
+    }
 
     currentList.sort((a, b) => a.tarih.compareTo(b.tarih));
     currentList = currentList.reversed.toList();

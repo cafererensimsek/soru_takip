@@ -12,34 +12,41 @@ List<int> getData(QuerySnapshot current) {
   int toplamFizY = 0;
   int toplamKimY = 0;
   int toplamBioY = 0;
-  current.documents.forEach((element) {
-    switch (element.data['dersAdi']) {
-      case 'Matematik':
-        toplamMat += element.data['soruSayisi'];
-        toplamMatY += element.data['yanlisSayisi'];
-        break;
-      case 'Geometri':
-      case 'Fen':
-        toplamGeo += element.data['soruSayisi'];
-        toplamGeoY += element.data['yanlisSayisi'];
-        break;
-      case 'Fizik':
-      case 'Türkçe':
-        toplamFiz += element.data['soruSayisi'];
-        toplamFizY += element.data['yanlisSayisi'];
-        break;
-      case 'Kimya':
-      case 'Sosyal':
-        toplamKim += element.data['soruSayisi'];
-        toplamKimY += element.data['yanlisSayisi'];
-        break;
-      case 'Biyoloji':
-      case 'İngilizce':
-        toplamBio += element.data['soruSayisi'];
-        toplamBioY += element.data['yanlisSayisi'];
-        break;
-    }
-  });
+  int toplamTR = 0;
+  int toplamTRY = 0;
+  if (current != null) {
+    current.documents.forEach((element) {
+      switch (element.data['dersAdi']) {
+        case 'Matematik':
+          toplamMat += element.data['soruSayisi'];
+          toplamMatY += element.data['yanlisSayisi'];
+          break;
+        case 'Geometri':
+        case 'Fen':
+          toplamGeo += element.data['soruSayisi'];
+          toplamGeoY += element.data['yanlisSayisi'];
+          break;
+        case 'Fizik':
+        case 'Türkçe':
+          toplamFiz += element.data['soruSayisi'];
+          toplamFizY += element.data['yanlisSayisi'];
+          break;
+        case 'Kimya':
+        case 'Sosyal':
+          toplamKim += element.data['soruSayisi'];
+          toplamKimY += element.data['yanlisSayisi'];
+          break;
+        case 'Biyoloji':
+        case 'İngilizce':
+          toplamBio += element.data['soruSayisi'];
+          toplamBioY += element.data['yanlisSayisi'];
+          break;
+        case 'Türkçe':
+          toplamTR += element.data['soruSayisi'];
+          toplamTRY += element.data['yanlisSayisi'];
+      }
+    });
+  }
   return [
     toplamMat,
     toplamMatY,
@@ -50,44 +57,37 @@ List<int> getData(QuerySnapshot current) {
     toplamKim,
     toplamKimY,
     toplamBio,
-    toplamBioY
+    toplamBioY,
+    toplamTR,
+    toplamTRY,
   ];
 }
 
-Widget dataTable(QuerySnapshot current, List<String> dersler) {
+Widget dataTable(QuerySnapshot current, List<String> dersler, String isim) {
   List<int> collective = getData(current);
+
+  int iter = isim == 'taha' ? 12 : 10;
 
   return DataTable(
     columns: [
-      DataColumn(
-          label: Text(dersler[0],
-              style: TextStyle(color: Colors.black, fontSize: 15))),
-      DataColumn(
-          label: Text(dersler[1],
-              style: TextStyle(color: Colors.black, fontSize: 15))),
-      DataColumn(
-          label: Text(dersler[2],
-              style: TextStyle(color: Colors.black, fontSize: 15))),
-      DataColumn(
-          label: Text(dersler[3],
-              style: TextStyle(color: Colors.black, fontSize: 15))),
-      DataColumn(
-          label: Text(dersler[4],
-              style: TextStyle(color: Colors.black, fontSize: 15))),
+      for (int i = 0; i < dersler.length; i++)
+        DataColumn(
+            label: Text(dersler[i],
+                style: TextStyle(color: Colors.black, fontSize: 15))),
     ],
     rows: [
       DataRow(cells: [
-        for (var i = 0; i < 10; i += 2)
+        for (var i = 0; i < iter; i += 2)
           DataCell(Text('${collective[i]}',
               style: TextStyle(color: Colors.black, fontSize: 15))),
       ]),
       DataRow(cells: [
-        for (var i = 1; i < 10; i += 2)
+        for (var i = 1; i < iter; i += 2)
           DataCell(Text('${collective[i]}',
               style: TextStyle(color: Colors.black, fontSize: 15))),
       ]),
       DataRow(cells: [
-        for (var i = 0; i < 10; i += 2)
+        for (var i = 0; i < iter; i += 2)
           DataCell(Text(
               '% ' +
                   ((collective[i] - collective[i + 1]) / collective[i] * 100)
