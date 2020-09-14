@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-List<int> getData(QuerySnapshot current) {
+List<int> getDailyData(QuerySnapshot current) {
   int toplamMat = 0;
   int toplamGeoFen = 0;
   int toplamFizTr = 0;
@@ -18,38 +19,41 @@ List<int> getData(QuerySnapshot current) {
   int toplamSosY = 0;
   if (current != null) {
     current.documents.forEach((element) {
-      switch (element.data['dersAdi']) {
-        case 'Matematik':
-          toplamMat += element.data['soruSayisi'];
-          toplamMatY += element.data['yanlisSayisi'];
-          break;
-        case 'Geometri':
-        case 'Fen':
-          toplamGeoFen += element.data['soruSayisi'];
-          toplamGeoFenY += element.data['yanlisSayisi'];
-          break;
-        case 'Fizik':
-        case 'Türkçe':
-          toplamFizTr += element.data['soruSayisi'];
-          toplamFizTrY += element.data['yanlisSayisi'];
-          break;
-        case 'Kimya':
-        case 'Sosyal':
-          toplamKimSos += element.data['soruSayisi'];
-          toplamKimSosY += element.data['yanlisSayisi'];
-          break;
-        case 'Biyoloji':
-        case 'İngilizce':
-          toplamBioIng += element.data['soruSayisi'];
-          toplamBioIngY += element.data['yanlisSayisi'];
-          break;
-        case 'Türkçe':
-          toplamTR += element.data['soruSayisi'];
-          toplamTRY += element.data['yanlisSayisi'];
-          break;
-        case 'Sosyal Bilimler':
-          toplamSos += element.data['soruSayisi'];
-          toplamSosY += element.data['yanlisSayisi'];
+      if (element.data['strTarih'] ==
+          DateFormat('dd/MM/yyyy').format(DateTime.now())) {
+        switch (element.data['dersAdi']) {
+          case 'Matematik':
+            toplamMat += element.data['soruSayisi'];
+            toplamMatY += element.data['yanlisSayisi'];
+            break;
+          case 'Geometri':
+          case 'Fen':
+            toplamGeoFen += element.data['soruSayisi'];
+            toplamGeoFenY += element.data['yanlisSayisi'];
+            break;
+          case 'Fizik':
+          case 'Türkçe':
+            toplamFizTr += element.data['soruSayisi'];
+            toplamFizTrY += element.data['yanlisSayisi'];
+            break;
+          case 'Kimya':
+          case 'Sosyal':
+            toplamKimSos += element.data['soruSayisi'];
+            toplamKimSosY += element.data['yanlisSayisi'];
+            break;
+          case 'Biyoloji':
+          case 'İngilizce':
+            toplamBioIng += element.data['soruSayisi'];
+            toplamBioIngY += element.data['yanlisSayisi'];
+            break;
+          case 'Türkçe':
+            toplamTR += element.data['soruSayisi'];
+            toplamTRY += element.data['yanlisSayisi'];
+            break;
+          case 'Sosyal Bilimler':
+            toplamSos += element.data['soruSayisi'];
+            toplamSosY += element.data['yanlisSayisi'];
+        }
       }
     });
   }
@@ -71,8 +75,9 @@ List<int> getData(QuerySnapshot current) {
   ];
 }
 
-Widget dataTable(QuerySnapshot current, List<String> dersler, bool isVisible) {
-  List<int> collective = getData(current);
+Widget dailyDataTable(
+    QuerySnapshot current, List<String> dersler, bool isVisible) {
+  List<int> collective = getDailyData(current);
 
   int iter = dersler.length * 2;
 

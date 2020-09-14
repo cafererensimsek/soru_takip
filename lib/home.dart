@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
+import 'package:soru_takip/drawer.dart';
 import 'package:soru_takip/list.dart';
 import 'package:soru_takip/soru.dart';
 import 'package:soru_takip/widgets.dart';
@@ -24,6 +25,8 @@ class _HomeState extends State<Home> {
   Color tahaIcon = Colors.white;
   Color yavuzIcon = Colors.blue;
   List<String> dersListesi;
+  bool isSumVisible = false;
+  bool isDailyVisible = false;
 
   @override
   void initState() {
@@ -68,8 +71,9 @@ class _HomeState extends State<Home> {
       return;
     }
 
-    var db =
-        Firestore.instance.collection(isim).document(strTarih + " " + dersAdi);
+    var db = Firestore.instance
+        .collection(isim)
+        .document(strTarih.replaceAll('/', ' ') + " " + dersAdi);
     int soru = int.parse(soruSayisi);
     int yanlis = int.parse(yanlisSayisi);
     db.setData({
@@ -147,7 +151,7 @@ class _HomeState extends State<Home> {
                       }
                       setState(() {
                         _tarih = pickedDate;
-                        strTarih = DateFormat('dd MM yyyy').format(pickedDate);
+                        strTarih = DateFormat('dd/MM/yyyy').format(pickedDate);
                       });
                     }),
                     child: Padding(
@@ -246,7 +250,37 @@ class _HomeState extends State<Home> {
           );
         },
       ),
-      body: display(currentData, currentList, dersListesi, isim),
+      appBar: AppBar(
+        backgroundColor: Colors.teal,
+        elevation: 10,
+        actions: [
+          FlatButton(
+            onPressed: () => setState(() => isDailyVisible = !isDailyVisible),
+            child: Text(
+                !isDailyVisible
+                    ? 'Günlük veriyi göster'
+                    : 'Günlük veriyi sakla',
+                style: TextStyle(
+                    color: !isDailyVisible ? Colors.white : Colors.black)),
+          ),
+          FlatButton(
+            onPressed: () => setState(() => isSumVisible = !isSumVisible),
+            child: Text(
+                !isSumVisible ? 'Toplam veriyi göster' : 'Toplam veriyi sakla',
+                style: TextStyle(
+                    color: !isSumVisible ? Colors.white : Colors.black)),
+          ),
+        ],
+      ),
+      drawer: Cekmece(),
+      body: display(
+        currentData,
+        currentList,
+        dersListesi,
+        isim,
+        isDailyVisible,
+        isSumVisible,
+      ),
       bottomNavigationBar: BottomAppBar(
         color: Colors.black,
         elevation: 25,

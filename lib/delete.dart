@@ -21,7 +21,8 @@ void delete(Soru soru, BuildContext ctx, String isim) {
           onPressed: () {
             Firestore.instance
                 .collection(isim)
-                .document(soru.strTarih + " " + soru.dersAdi)
+                .document(
+                    soru.strTarih.replaceAll('/', ' ') + " " + soru.dersAdi)
                 .delete();
             Navigator.pop(context);
           },
