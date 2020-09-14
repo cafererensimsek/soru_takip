@@ -1,26 +1,26 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:soru_takip/daily_data_table.dart';
 import 'package:soru_takip/data_table.dart';
 import 'package:soru_takip/delete.dart';
 import 'package:soru_takip/soru.dart';
 
 Widget display(
-    QuerySnapshot currentData,
-    List<Soru> currentList,
-    List<String> dersListesi,
-    String isim,
-    bool isDailyVisible,
-    bool isSumVisible) {
+  List<Soru> currentList,
+  List<String> dersListesi,
+  String isim,
+  bool isDailyVisible,
+  bool isSumVisible,
+  List<int> collectiveSum,
+  List<int> collectiveDaily,
+) {
   return Column(
     children: [
       SizedBox(height: 25),
       SingleChildScrollView(
-        child: dataTable(currentData, dersListesi, isSumVisible),
+        child: dataTable(dersListesi, isSumVisible, collectiveSum),
         scrollDirection: Axis.horizontal,
       ),
       SingleChildScrollView(
-        child: dailyDataTable(currentData, dersListesi, isDailyVisible),
+        child: dataTable(dersListesi, isDailyVisible, collectiveDaily),
         scrollDirection: Axis.horizontal,
       ),
       Expanded(

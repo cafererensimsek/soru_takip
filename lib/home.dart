@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
+import 'package:soru_takip/data_table.dart';
 import 'package:soru_takip/drawer.dart';
 import 'package:soru_takip/list.dart';
 import 'package:soru_takip/soru.dart';
@@ -21,12 +22,12 @@ class _HomeState extends State<Home> {
   String _dersAdi;
   DateTime _tarih;
   String strTarih;
-  String isim = 'yavuz';
-  Color tahaIcon = Colors.white;
-  Color yavuzIcon = Colors.blue;
+  String isim;
+  Color tahaIcon;
+  Color yavuzIcon;
   List<String> dersListesi;
-  bool isSumVisible = false;
-  bool isDailyVisible = false;
+  bool isSumVisible;
+  bool isDailyVisible;
 
   @override
   void initState() {
@@ -34,6 +35,11 @@ class _HomeState extends State<Home> {
     soruSayisiController.addListener(changeSoruSayisi);
     yanlisSayisiController.addListener(changeYanlisSayisi);
     this.dersListesi = ['Matematik', 'Fen', 'Türkçe', 'Sosyal', 'İngilizce'];
+    this.isim = 'yavuz';
+    this.tahaIcon = Colors.white;
+    this.yavuzIcon = Colors.blue;
+    this.isSumVisible = false;
+    this.isDailyVisible = false;
   }
 
   @override
@@ -238,6 +244,9 @@ class _HomeState extends State<Home> {
     currentList.sort((a, b) => a.tarih.compareTo(b.tarih));
     currentList = currentList.reversed.toList();
 
+    List<int> collectiveSum = getData(currentData, true);
+    List<int> collectiveDaily = getData(currentData, false);
+
     return Scaffold(
       backgroundColor: Colors.teal[300],
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -274,12 +283,13 @@ class _HomeState extends State<Home> {
       ),
       drawer: Cekmece(),
       body: display(
-        currentData,
         currentList,
         dersListesi,
         isim,
         isDailyVisible,
         isSumVisible,
+        collectiveSum,
+        collectiveDaily,
       ),
       bottomNavigationBar: BottomAppBar(
         color: Colors.black,
