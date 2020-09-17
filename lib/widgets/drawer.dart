@@ -41,7 +41,7 @@ class Cekmece extends StatelessWidget {
             onPressed: () => showAboutDialog(
               context: context,
               applicationName: 'Soru Takibi',
-              applicationVersion: '0.0.8',
+              applicationVersion: '1.0.0',
               applicationIcon: Icon(Icons.book),
             ),
             child: Row(

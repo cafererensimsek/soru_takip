@@ -76,51 +76,60 @@ List<int> getData(QuerySnapshot current, bool isSum) {
   ];
 }
 
-Widget dataTable(
-  List<String> dersler,
-  bool isVisible,
-  List<int> collective,
-) {
-  int iter = dersler.length * 2;
+class CollectiveDataTable extends StatelessWidget {
+  final List<String> dersler;
+  final bool isVisible;
+  final List<int> collective;
 
-  return Visibility(
-    visible: isVisible,
-    child: Card(
-      color: Colors.tealAccent,
-      elevation: 3,
-      child: DataTable(
-        columns: [
-          for (int i = 0; i < dersler.length; i++)
-            DataColumn(
-                label: Text(dersler[i].split(" ")[0],
-                    style: TextStyle(color: Colors.black, fontSize: 15))),
-        ],
-        rows: [
-          DataRow(cells: [
-            for (var i = 0; i < iter; i += 2)
-              DataCell(Text('${collective[i]}',
-                  style: TextStyle(color: Colors.black, fontSize: 15))),
-          ]),
-          DataRow(cells: [
-            for (var i = 1; i < iter; i += 2)
-              DataCell(Text('${collective[i]}',
-                  style: TextStyle(color: Colors.black, fontSize: 15))),
-          ]),
-          DataRow(cells: [
-            for (var i = 0; i < iter; i += 2)
-              DataCell(Text(
-                  (collective[i] != collective[i + 1])
-                      ? '% ' +
-                          ((collective[i] - collective[i + 1]) /
-                                  collective[i] *
-                                  100)
-                              .toStringAsFixed(0)
-                      : '-',
-                  style: TextStyle(color: Colors.black, fontSize: 15))),
-          ]),
-        ],
-        columnSpacing: 25,
+  const CollectiveDataTable(this.dersler, this.isVisible, this.collective,
+      {Key key})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    int iter = dersler.length * 2;
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Visibility(
+        visible: isVisible,
+        child: Card(
+          color: Colors.tealAccent,
+          elevation: 3,
+          child: DataTable(
+            columns: [
+              for (int i = 0; i < dersler.length; i++)
+                DataColumn(
+                    label: Text(dersler[i].split(" ")[0],
+                        style: TextStyle(color: Colors.black, fontSize: 15))),
+            ],
+            rows: [
+              DataRow(cells: [
+                for (var i = 0; i < iter; i += 2)
+                  DataCell(Text('${collective[i]}',
+                      style: TextStyle(color: Colors.black, fontSize: 15))),
+              ]),
+              DataRow(cells: [
+                for (var i = 1; i < iter; i += 2)
+                  DataCell(Text('${collective[i]}',
+                      style: TextStyle(color: Colors.black, fontSize: 15))),
+              ]),
+              DataRow(cells: [
+                for (var i = 0; i < iter; i += 2)
+                  DataCell(Text(
+                      (collective[i] != collective[i + 1])
+                          ? '% ' +
+                              ((collective[i] - collective[i + 1]) /
+                                      collective[i] *
+                                      100)
+                                  .toStringAsFixed(0)
+                          : '-',
+                      style: TextStyle(color: Colors.black, fontSize: 15))),
+              ]),
+            ],
+            columnSpacing: 25,
+          ),
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
