@@ -82,32 +82,28 @@ class _HomeState extends State<Home> {
         yanlisSayisi == null ||
         dersAdi == null ||
         strTarih == null) {
+      Scaffold.of(ctx).showSnackBar(
+          SnackBar(content: Center(child: Text('Girdilerden birisi boş!'))));
+    } else {
+      var db = Firestore.instance
+          .collection(isim)
+          .document('${strTarih.replaceAll('/', ' ')} $dersAdi');
+      int soru = int.parse(soruSayisi);
+      int yanlis = int.parse(yanlisSayisi);
+      db.setData({
+        'soruSayisi': FieldValue.increment(soru),
+        'yanlisSayisi': FieldValue.increment(yanlis),
+        'dersAdi': dersAdi,
+        'strTarih': strTarih,
+        'tarih': tarih,
+      }, merge: true);
+
       setState(() {
         _dersAdi = null;
         _tarih = null;
       });
-      Navigator.pop(context);
-      return;
+      Navigator.pop(ctx);
     }
-
-    var db = Firestore.instance
-        .collection(isim)
-        .document('${strTarih.replaceAll('/', ' ')} $dersAdi');
-    int soru = int.parse(soruSayisi);
-    int yanlis = int.parse(yanlisSayisi);
-    db.setData({
-      'soruSayisi': FieldValue.increment(soru),
-      'yanlisSayisi': FieldValue.increment(yanlis),
-      'dersAdi': dersAdi,
-      'strTarih': strTarih,
-      'tarih': tarih,
-    }, merge: true);
-
-    setState(() {
-      _dersAdi = null;
-      _tarih = null;
-    });
-    Navigator.pop(ctx);
   }
 
   Widget dropdownMenu() {
